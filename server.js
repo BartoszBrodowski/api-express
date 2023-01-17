@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const dotenv = require('dotenv');
 const products = require('./src/models/placeholderProducts');
 const Product = require('./src/models/productModel');
+const productsRoutes = require('./src/routes/productRoutes');
+const bodyParser = require('body-parser');
 
 require('dotenv').config();
 
 const app = express();
+app.use('/products', productsRoutes);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const uri = `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@pwasil.pl:27017/bartek`;
 
