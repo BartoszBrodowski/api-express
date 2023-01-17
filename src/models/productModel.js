@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 
 const productSchema = new mongoose.Schema({
 	name: {
@@ -25,6 +24,6 @@ const productSchema = new mongoose.Schema({
 	},
 });
 
-const Product = mongoose.model('stepik_produkty', productSchema);
+const Product = mongoose.model('products', productSchema);
 
 module.exports = Product;

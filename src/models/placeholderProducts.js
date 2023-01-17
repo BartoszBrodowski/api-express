@@ -11,3 +11,5 @@ const products = [
 	{ name: 'Phone', price: 300, description: 'A phone for your computer', quantity: 1 },
 	{ name: 'Charger', price: 50, description: 'A charger for your computer', quantity: 1 },
 ];
+
+module.exports = products;
