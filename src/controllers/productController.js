@@ -68,19 +68,14 @@ module.exports.deleteProduct = async (req, res) => {
 };
 
 module.exports.updateProduct = async (req, res) => {
-	const { id } = req.params;
-	const { name, price, description, quantity } = req.query;
 	try {
-		const product = await Product.findByIdAndUpdate(
-			id,
-			{
-				name: name,
-				price: price,
-				description: description,
-				quantity: quantity,
-			},
-			{ new: true }
-		);
+		const { id, name, price, description, quantity } = req.query;
+		const product = await Product.findByIdAndUpdate(id, {
+			name: name,
+			price: price,
+			description: description,
+			quantity: quantity,
+		});
 		res.status(200).json(product);
 	} catch (err) {
 		res.status(404).json({ message: err.message });
