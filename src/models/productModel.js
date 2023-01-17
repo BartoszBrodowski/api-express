@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('mongoose-unique-validator');
 
 const productSchema = new mongoose.Schema({
 	name: {
@@ -23,7 +24,7 @@ const productSchema = new mongoose.Schema({
 		min: [0, 'Product quantity must be greater or equal then 0'],
 	},
 });
-
+productSchema.plugin(validator);
 const Product = mongoose.model('products', productSchema);
 
 module.exports = Product;
