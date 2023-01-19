@@ -31,10 +31,20 @@ const getProductsFunc = async (name, price, quantity) => {
 };
 
 module.exports.getProducts = async (req, res) => {
-	// req.body is undefined
-	const { name, price, quantity } = req.query;
+	const { name, price, quantity, sort } = req.query;
 	try {
 		const products = await getProductsFunc(name, price, quantity);
+		if (sort) {
+			products.sort((a, b) => {
+				if (a[sort] > b[sort]) {
+					return 1;
+				}
+				if (a[sort] < b[sort]) {
+					return -1;
+				}
+				return 0;
+			});
+		}
 		res.status(200).json(products);
 	} catch (err) {
 		res.status(404).json({ message: err.message });
@@ -68,14 +78,15 @@ module.exports.deleteProduct = async (req, res) => {
 };
 
 module.exports.updateProduct = async (req, res) => {
+	const { id } = req.params;
+	const { name, price, description, quantity } = req.body;
 	try {
-		const { id, name, price, description, quantity } = req.query;
-		const product = await Product.findByIdAndUpdate(id, {
-			name: name,
-			price: price,
-			description: description,
-			quantity: quantity,
-		});
+		const product = await Product.findOneAndUpdate(
+			{ _id: id },
+			{ name: name, price: price, description: description, quantity: quantity },
+			{ new: true }
+		);
+		await product.save();
 		res.status(200).json(product);
 	} catch (err) {
 		res.status(404).json({ message: err.message });
