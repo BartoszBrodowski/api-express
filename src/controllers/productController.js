@@ -31,8 +31,8 @@ const getProductsFunc = async (name, price, quantity) => {
 };
 
 module.exports.getProducts = async (req, res) => {
-	const { name, price, quantity, sort } = req.query;
 	try {
+		const { name, price, quantity, sort } = req.query;
 		const products = await getProductsFunc(name, price, quantity);
 		if (sort) {
 			products.sort((a, b) => {
@@ -52,8 +52,8 @@ module.exports.getProducts = async (req, res) => {
 };
 
 module.exports.postProduct = async (req, res) => {
-	const { name, price, description, quantity } = req.query;
 	try {
+		const { name, price, description, quantity } = req.query;
 		const newProduct = new Product({
 			name: name,
 			price: price,
@@ -68,8 +68,8 @@ module.exports.postProduct = async (req, res) => {
 };
 
 module.exports.deleteProduct = async (req, res) => {
-	const { id } = req.params;
 	try {
+		const { id } = req.params;
 		await Product.findByIdAndDelete(id);
 		res.status(200).json({ message: 'Product deleted' });
 	} catch (err) {
@@ -78,9 +78,9 @@ module.exports.deleteProduct = async (req, res) => {
 };
 
 module.exports.updateProduct = async (req, res) => {
-	const { id } = req.params;
-	const { name, price, description, quantity } = req.body;
 	try {
+		const { id } = req.params;
+		const { name, price, description, quantity } = req.body;
 		const product = await Product.findOneAndUpdate(
 			{ _id: id },
 			{ name: name, price: price, description: description, quantity: quantity },
@@ -88,6 +88,28 @@ module.exports.updateProduct = async (req, res) => {
 		);
 		await product.save();
 		res.status(200).json(product);
+	} catch (err) {
+		res.status(404).json({ message: err.message });
+	}
+};
+
+module.exports.getReport = async (req, res) => {
+	try {
+		const products = await Product.find();
+		const report = {
+			totalProducts: products.length,
+			totalPrice: products.reduce((acc, product) => acc + product.price, 0),
+			totalQuantity: products.reduce((acc, product) => acc + product.quantity, 0),
+		};
+		const productsMap = products.map((product) => {
+			return {
+				name: product.name,
+				price: product.price,
+				quantity: product.quantity,
+				totalProductsPrice: product.price * product.quantity,
+			};
+		});
+		res.status(200).json({ generalReport: report, detailedReport: productsMap });
 	} catch (err) {
 		res.status(404).json({ message: err.message });
 	}
